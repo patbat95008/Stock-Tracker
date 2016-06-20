@@ -44,51 +44,66 @@ public class StockOption {
 			page += '\n';
 		}
 		
-		int start = page.indexOf("values:[", 1);
-		int stop = page.indexOf("]", start);
+		int start = page.indexOf("values:[", 1); //find start of data
+		int stop = page.indexOf("]", start); //Find end of data
 		
 		String data = page.substring(start + 8, stop);
 		
 		//Debug Data printout
-		System.out.println(data);
+		//System.out.printf("Updating...%nData Downloaded:%n%s%n", data);
+		
 		
 		//Get data into variables
-		start = data.indexOf(',');
+		start = data.indexOf(',');	//Increment
 		stop = data.indexOf(',', start + 1);
 		
 		name = data.substring(start + 2, stop - 1);
 		
-		start = stop;
-		stop = data.indexOf(',', start + 1);
+		start = stop;	//Increment
+		stop = data.indexOf(",\"", start + 1);
 		
-		//price = Double.parseDouble( data.substring(start + 2, stop - 1) );
+		//Remove potential commas
+		String priceSTR = data.substring(start + 2, stop - 1);
+		priceSTR = this.removeComma(priceSTR);
 		
-		start = stop;
-		stop = data.indexOf(',', start + 1);
+		price = Double.parseDouble(priceSTR);
 		
-		//change = Double.parseDouble( data.substring(start + 2, stop - 1) );
+		start = stop;	//Increment
+		stop = data.indexOf(",\"", start + 1);
 		
-		start = stop;
-		stop = data.indexOf(',', start + 1);
+		change = Double.parseDouble( data.substring(start + 2, stop - 1) );
+		
+		start = stop;	//Increment
+		stop = data.indexOf(",\"", start + 1);
 		// skip "chg" data
-		start = stop;
-		stop = data.indexOf(',', start + 1);
+		start = stop;	//Increment
+		stop = data.indexOf(",\"", start + 1);
 		
-		//percentChange = Double.parseDouble( data.substring(start + 2, stop - 1) );
+		percentChange = Double.parseDouble( data.substring(start + 2, stop - 1) );
 		
-		start = stop;
+		start = stop;	//Increment
 		stop = data.indexOf(',', start + 1);
 		// skip ""
-		start = stop;
+		start = stop;	//Increment
 		stop = data.indexOf(',', start + 1);
 		
-		//marketCap = data.substring(start +2, stop - 1);
+		marketCap = data.substring(start +2, stop - 1);
 		
-		start = stop;
+		start = stop;	//Increment
 		stop = data.indexOf(',', start + 1);
 		
-		//market = data.substring(start + 2, stop - 1);
+		market = data.substring(start + 2, stop - 1);
 		
+	}
+	
+	private String removeComma(String in){
+		while(in.indexOf(',') != -1){
+			int index = in.indexOf(',');
+			in = in.substring( 0, index )
+					+ in.substring(index + 1, in.length() - 1);
+		}
+		
+		return in;
 	}
 	
 	public void printData(){
