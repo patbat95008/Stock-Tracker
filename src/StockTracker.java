@@ -15,7 +15,6 @@ public class StockTracker {
 		StockOption testStock = new StockOption("ASC");
 		testStock.update();
 		testStock.printData();
-
 	}
 	
 }

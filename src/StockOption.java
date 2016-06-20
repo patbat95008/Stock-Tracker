@@ -96,6 +96,7 @@ public class StockOption {
 		
 	}
 	
+	//Takes in a string, removes all commas, returns fixed string
 	private String removeComma(String in){
 		while(in.indexOf(',') != -1){
 			int index = in.indexOf(',');
@@ -106,8 +107,19 @@ public class StockOption {
 		return in;
 	}
 	
+	/* Prints all data - Example:
+	 *  ==========
+	 *	SYM: Stock Name 
+	 *	==========
+	 *	Price:	$3627.90
+	 *	Change:	167.91 ( 4.85 % )
+	 *	Market:	LON; Cap: 3.03B
+	 *	==========
+	 */
 	public void printData(){
-		System.out.printf("==========%n"
+		
+		System.out.printf(""
+				+ "==========%n"
 				+ "%s: %s "
 				+ "%n==========%n"
 				+ "Price:\t$%.2f%n"
