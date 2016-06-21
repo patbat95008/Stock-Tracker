@@ -10,7 +10,14 @@ public class StockOption {
 	private String symbol, name;
 	private double price, change, percentChange;
 	private String marketCap, market; 
+	private boolean badStock = false;
 	
+	public StockOption () throws IOException{
+		symbol = "AAPL";
+		this.update();
+	}
+	
+	//Debug constructor - DON'T USE
 	public StockOption(String symbol, String name, double price, double change, double percentChange, String marketCap, String market){
 		this.symbol = symbol;
 		this.name = name;
@@ -21,6 +28,8 @@ public class StockOption {
 		this.market = market;
 	}
 	
+	//Default constructor
+	//NOTE: It needs a valid stock market symbol to work!
 	public StockOption(String symbol){
 		this.symbol = symbol;
 		name = "";
@@ -33,13 +42,11 @@ public class StockOption {
 	//Out: Nothing - Fills/Overwrites other parameters
 	public void update () throws IOException{
 		URL link = new URL("https://www.google.com/finance?q=" + symbol);
-		
 		URLConnection conn = link.openConnection();
 		InputStream in = conn.getInputStream();
 		
 		// Get data
 		BufferedReader buff = new BufferedReader(new InputStreamReader(in));
-		
 		String line = null, page = "";
 		
 		while ((line = buff.readLine()) != null){
@@ -49,63 +56,45 @@ public class StockOption {
 		
 		int start = page.indexOf("values:[", 1); //find start of data
 		int stop = page.indexOf("]", start); //Find end of data
-		
-		if(start == -1)
-			throw new IOException("%n=====%nData Unreadable!%n=====%n");
-		
+		//If it can't find the data where it's supposed to be, mark the stock as "bad"
+		if(start == -1){
+			badStock = true;
+			throw new IOException("Data Unreadable!");
+		}
 		String data = page.substring(start + 8, stop);
 		
 		//Debug Data printout
 		//System.out.printf("Updating...%nData Downloaded:%n%s%n%n", data);
 		
-		
 		//Get data into variables
 		start = data.indexOf(',');	//Increment
 		stop = data.indexOf(',', start + 1);
-		
 		name = data.substring(start + 2, stop - 1);
 		
 		start = stop;	//Increment
-		stop = data.indexOf(",\"", start + 1);
-		
-		//Remove potential commas
-		/*String priceSTR = data.substring(start + 2, stop - 1);
-		priceSTR = this.removeComma(priceSTR);
-		
-		try{
-			price = Double.parseDouble(priceSTR);
-		} catch (NumberFormatException e){
-			price = 0;
-		}*/
-		
+		stop = data.indexOf(",\"", start + 1);		
 		price = this.getDouble(data, start, stop);
 		
 		start = stop;	//Increment
 		stop = data.indexOf(",\"", start + 1);
-		
-		//change = Double.parseDouble( data.substring(start + 2, stop - 1) );
 		change = this.getDouble(data, start, stop);
 		
 		start = stop;	//Increment
 		stop = data.indexOf(",\"", start + 1);
-		// skip "chg" data
+		// skip line
 		start = stop;	//Increment
 		stop = data.indexOf(",\"", start + 1);
-		
-		//percentChange = Double.parseDouble( data.substring(start + 2, stop - 1) );
 		percentChange = this.getDouble(data, start, stop);
 		
 		start = stop;	//Increment
 		stop = data.indexOf(',', start + 1);
-		// skip ""
+		// skip line
 		start = stop;	//Increment
 		stop = data.indexOf(',', start + 1);
-		
 		marketCap = data.substring(start +2, stop - 1);
 		
 		start = stop;	//Increment
 		stop = data.indexOf(',', start + 1);
-		
 		market = data.substring(start + 2, stop - 1);
 		
 	}
@@ -122,6 +111,7 @@ public class StockOption {
 			dub = Double.parseDouble(priceSTR);
 		} catch (NumberFormatException e){
 			dub = 0;
+			badStock = true;
 		}
 		
 		return dub;
@@ -160,6 +150,8 @@ public class StockOption {
 				symbol, name, price, change, percentChange, market, marketCap);
 	}
 	
+	//Returns an unedited string for GUI display
+	//Prints in same format as above
 	public String giveData(){
 		String data = "";
 		
@@ -174,7 +166,15 @@ public class StockOption {
 		return data;
 	}
 	
+	//Setter//
+	public void setSymbol(String symb) throws IOException{
+		symbol = symb;
+		this.update();
+	}
+	
 	//Getters//
+	public boolean isBadStock(){ return badStock;}
+	
 	public String getSymbol(){ return symbol;}
 	
 	public String getName(){ return name;}

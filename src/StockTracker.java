@@ -15,6 +15,7 @@ import java.util.*;
 
 public class StockTracker extends JPanel implements ActionListener {
 
+	//Create a GUI using market data
 	private static void createGUI(StockOption[] market){
 		//Create and set up the window
 		JFrame frame = new JFrame("Stock-Tracker");
@@ -22,8 +23,6 @@ public class StockTracker extends JPanel implements ActionListener {
 		Container topLevelContainer = new Container();
 		
 		//Add items
-		//JLabel label = new JLabel("     Hello World!");
-		//frame.getContentPane().add(label);
 		/* Example of adding content
 		 * contentPane.setBorder(someBorder);
 		 * contentPane.add(someComponent, BorderLayout.CENTER); 
@@ -34,24 +33,14 @@ public class StockTracker extends JPanel implements ActionListener {
 		//textField.addActionListener(this);
 		
 		String allMarketTxt = buildList(market);
-		
-		JTextArea textArea = new JTextArea(
-				allMarketTxt
-				);
-		
-		
-		JScrollPane scrollPane = new JScrollPane(textArea);
+		JTextArea textArea = new JTextArea(allMarketTxt);
 		textArea.setEditable(false);
+		//JScrollPane scrollPane = new JScrollPane(textArea);
 		
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		
-		c.fill = GridBagConstraints.HORIZONTAL;
+		//Add everything
 		frame.add(textArea);
 		
-		
 		//Display the window
-		//frame.add();
 		frame.pack();
 		frame.setVisible(true);
 	}
@@ -61,7 +50,7 @@ public class StockTracker extends JPanel implements ActionListener {
 		/*StockOption testStock = new StockOption("ASC");
 		testStock.update();
 		testStock.printData();*/
-		StockOption[] market = buildMarket(3);
+		StockOption[] market = buildMarket(5);
 		
 		//Print results
 		/*for(int i = 0; i < market.length; i++){
@@ -69,6 +58,8 @@ public class StockTracker extends JPanel implements ActionListener {
 		}*/
 		
 		final StockOption[] fMarket = market;
+		
+		//System.out.print(buildList(market));
 		
 		//Create and show the GUI
 		javax.swing.SwingUtilities.invokeLater(new Runnable(){
@@ -85,12 +76,17 @@ public class StockTracker extends JPanel implements ActionListener {
 		for(int i = 0; i < market.length; i++){
 			allProfiles += market[i].giveData();
 		}
-		
-		System.out.printf(allProfiles);
+
+		//Debug Printer
+		//System.out.printf(allProfiles);
 		
 		return allProfiles;
 	}
 	
+	//Builds a test array of stock options using an alphabetical list of market data
+	//Throws out non-valid entries (It's pretty choosy)
+	//IN: an integer of the number of listings to download
+	//OUT: An array of the first [marketSize] of stocks
 	public static StockOption[] buildMarket(int marketSize) throws IOException{
 		StockOption market[] = new StockOption[marketSize];
 		int start, stop;
@@ -109,28 +105,25 @@ public class StockTracker extends JPanel implements ActionListener {
 		for(int index = 0; index < marketSize; index++){
 			//Get symbols from data
 			line = buffer.readLine();
+			
 			start = 0;
 			stop = line.indexOf('|', start);
 			
 			symb = line.substring(start, stop);
-			
 			//download and build market array
 			StockOption stock = new StockOption(symb);
 			
-			System.out.printf("Now downloading: %s%n",symb);
-			
+			//Debug download statement
+			//System.out.printf("Now downloading: %s%n",symb);
 			try{
 				stock.update();
 			} catch(IOException e){
 				System.out.printf("%n=====%nData Unreadable!%n=====%n%n");
 			}
-			//stock.printData();
-			
-			market[index] = stock;
+			//Only add stocks that work
+			if(!stock.isBadStock())	market[index] = stock;
+			else index--; //Skip the stock and read a new line
 		}
-		
-		
-		
 		return market;
 	}
 
