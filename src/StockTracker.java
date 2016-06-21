@@ -55,7 +55,7 @@ public class StockTracker {
 			try{
 				stock.update();
 			} catch(IOException e){
-				System.out.println("Warning: data unreadable");
+				System.out.printf("%n=====%nData Unreadable!%n=====%n%n");
 			}
 			//stock.printData();
 			

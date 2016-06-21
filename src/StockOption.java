@@ -51,7 +51,7 @@ public class StockOption {
 		int stop = page.indexOf("]", start); //Find end of data
 		
 		if(start == -1)
-			throw new IOException("Data Unreadable!");
+			throw new IOException("%n=====%nData Unreadable!%n=====%n");
 		
 		String data = page.substring(start + 8, stop);
 		
@@ -156,7 +156,7 @@ public class StockOption {
 				+ "Price:\t$%.2f%n"
 				+ "Change:\t%.2f ( %.2f %% )%n"
 				+ "Market:\t%s; Cap: %s%n"
-				+ "==========%n",
+				+ "==========%n%n",
 				symbol, name, price, change, percentChange, market, marketCap);
 	}
 	
