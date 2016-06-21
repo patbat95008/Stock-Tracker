@@ -47,10 +47,13 @@ public class StockOption {
 		int start = page.indexOf("values:[", 1); //find start of data
 		int stop = page.indexOf("]", start); //Find end of data
 		
+		if(start == -1)
+			throw new IOException("Data Unreadable!");
+		
 		String data = page.substring(start + 8, stop);
 		
 		//Debug Data printout
-		//System.out.printf("Updating...%nData Downloaded:%n%s%n", data);
+		System.out.printf("%nUpdating...%nData Downloaded:%n%s%n%n", data);
 		
 		
 		//Get data into variables
@@ -63,15 +66,22 @@ public class StockOption {
 		stop = data.indexOf(",\"", start + 1);
 		
 		//Remove potential commas
-		String priceSTR = data.substring(start + 2, stop - 1);
+		/*String priceSTR = data.substring(start + 2, stop - 1);
 		priceSTR = this.removeComma(priceSTR);
 		
-		price = Double.parseDouble(priceSTR);
+		try{
+			price = Double.parseDouble(priceSTR);
+		} catch (NumberFormatException e){
+			price = 0;
+		}*/
+		
+		price = this.getDouble(data, start, stop);
 		
 		start = stop;	//Increment
 		stop = data.indexOf(",\"", start + 1);
 		
-		change = Double.parseDouble( data.substring(start + 2, stop - 1) );
+		//change = Double.parseDouble( data.substring(start + 2, stop - 1) );
+		change = this.getDouble(data, start, stop);
 		
 		start = stop;	//Increment
 		stop = data.indexOf(",\"", start + 1);
@@ -79,7 +89,8 @@ public class StockOption {
 		start = stop;	//Increment
 		stop = data.indexOf(",\"", start + 1);
 		
-		percentChange = Double.parseDouble( data.substring(start + 2, stop - 1) );
+		//percentChange = Double.parseDouble( data.substring(start + 2, stop - 1) );
+		percentChange = this.getDouble(data, start, stop);
 		
 		start = stop;	//Increment
 		stop = data.indexOf(',', start + 1);
@@ -94,6 +105,23 @@ public class StockOption {
 		
 		market = data.substring(start + 2, stop - 1);
 		
+	}
+	
+	//try and pull a double out of the data
+	private double getDouble(String line, int start, int stop){
+		double dub = 0;
+				
+		//Remove potential commas
+		String priceSTR = line.substring(start + 2, stop - 1);
+		priceSTR = this.removeComma(priceSTR);
+		
+		try{
+			dub = Double.parseDouble(priceSTR);
+		} catch (NumberFormatException e){
+			dub = 0;
+		}
+		
+		return dub;
 	}
 	
 	//Takes in a string, removes all commas, returns fixed string
