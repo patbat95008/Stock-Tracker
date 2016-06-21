@@ -160,6 +160,8 @@ public class StockOption {
 				symbol, name, price, change, percentChange, market, marketCap);
 	}
 	
+	
+	
 	//Getters//
 	public String getSymbol(){ return symbol;}
 	

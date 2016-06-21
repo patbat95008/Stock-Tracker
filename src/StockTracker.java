@@ -5,12 +5,26 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import javax.swing.*;
 import java.util.*;
 
 //Using StockQuote.java as an example
 
 public class StockTracker {
 
+	private static void createGUI(){
+		//Create and set up the window
+		JFrame frame = new JFrame("Stock-Tracker");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		//Add items
+		JLabel label = new JLabel("     Hello World!");
+		frame.getContentPane().add(label);
+		
+		//Display the window
+		frame.pack();
+		frame.setVisible(true);
+	}
 	
 	public static void main(String[] args) throws IOException{
 		//testStock
@@ -19,9 +33,24 @@ public class StockTracker {
 		testStock.printData();*/
 		StockOption[] market = buildMarket(10);
 		
+		//Print results
 		for(int i = 0; i < market.length; i++){
 			market[i].printData();
 		}
+		
+		//Create and show the GUI
+		/*javax.swing.SwingUtilities.invokeLater(new Runnable(){
+			public void run(){
+				createGUI();
+			}
+		});*/
+	}
+	
+	//Creates a single string with printed results
+	public static String buildList(StockOption[] market){
+		String allProfiles = "";
+		
+		return allProfiles;
 	}
 	
 	public static StockOption[] buildMarket(int marketSize) throws IOException{
