@@ -18,6 +18,10 @@ public class StockTracker {
 		testStock.update();
 		testStock.printData();*/
 		StockOption[] market = buildMarket(10);
+		
+		for(int i = 0; i < market.length; i++){
+			market[i].printData();
+		}
 	}
 	
 	public static StockOption[] buildMarket(int marketSize) throws IOException{
@@ -43,11 +47,19 @@ public class StockTracker {
 			
 			symb = line.substring(start, stop);
 			
-			//download and build market object
+			//download and build market array
 			StockOption stock = new StockOption(symb);
-			System.out.printf("%nNow downloading: %s%n",symb);
-			stock.update();
-			stock.printData();
+			
+			System.out.printf("Now downloading: %s%n",symb);
+			
+			try{
+				stock.update();
+			} catch(IOException e){
+				System.out.println("Warning: data unreadable");
+			}
+			//stock.printData();
+			
+			market[index] = stock;
 		}
 		
 		

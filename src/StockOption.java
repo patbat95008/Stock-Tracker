@@ -23,6 +23,9 @@ public class StockOption {
 	
 	public StockOption(String symbol){
 		this.symbol = symbol;
+		name = "";
+		price = 0; change = 0; percentChange = 0;
+		marketCap = ""; market = "";
 	}
 	
 	//Update: Pulls the stock data from Google Finance using an HTML scraper
@@ -53,7 +56,7 @@ public class StockOption {
 		String data = page.substring(start + 8, stop);
 		
 		//Debug Data printout
-		System.out.printf("%nUpdating...%nData Downloaded:%n%s%n%n", data);
+		System.out.printf("Updating...%nData Downloaded:%n%s%n%n", data);
 		
 		
 		//Get data into variables
