@@ -56,7 +56,7 @@ public class StockOption {
 		String data = page.substring(start + 8, stop);
 		
 		//Debug Data printout
-		System.out.printf("Updating...%nData Downloaded:%n%s%n%n", data);
+		//System.out.printf("Updating...%nData Downloaded:%n%s%n%n", data);
 		
 		
 		//Get data into variables
@@ -160,7 +160,19 @@ public class StockOption {
 				symbol, name, price, change, percentChange, market, marketCap);
 	}
 	
-	
+	public String giveData(){
+		String data = "";
+		
+		data += "==========\n";
+		data += "( " + symbol + " )" + ": " + name;
+		data += "\n==========\n";
+		data += "Price:\t$ " + Double.toString(price) + '\n';
+		data += "Change:\t" + Double.toString(change) + " ( " + Double.toString(percentChange) +"%% )\n";
+		data += "Market:\t" + market + "; Cap: " + marketCap + "\n"
+				+ "==========\n\n";
+		
+		return data;
+	}
 	
 	//Getters//
 	public String getSymbol(){ return symbol;}

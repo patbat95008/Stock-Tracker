@@ -1,3 +1,6 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.GridBagConstraints;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,18 +13,45 @@ import java.util.*;
 
 //Using StockQuote.java as an example
 
-public class StockTracker {
+public class StockTracker extends JPanel implements ActionListener {
 
-	private static void createGUI(){
+	private static void createGUI(StockOption[] market){
 		//Create and set up the window
 		JFrame frame = new JFrame("Stock-Tracker");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		Container topLevelContainer = new Container();
 		
 		//Add items
-		JLabel label = new JLabel("     Hello World!");
-		frame.getContentPane().add(label);
+		//JLabel label = new JLabel("     Hello World!");
+		//frame.getContentPane().add(label);
+		/* Example of adding content
+		 * contentPane.setBorder(someBorder);
+		 * contentPane.add(someComponent, BorderLayout.CENTER); 
+		 * contentPane.add(anotherComponent, BorderLayout.PAGE_END);
+		 */
+		JPanel contentPane = new JPanel(new BorderLayout());
+		JTextField textField = new JTextField(20);
+		//textField.addActionListener(this);
+		
+		String allMarketTxt = buildList(market);
+		
+		JTextArea textArea = new JTextArea(
+				allMarketTxt
+				);
+		
+		
+		JScrollPane scrollPane = new JScrollPane(textArea);
+		textArea.setEditable(false);
+		
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		
+		c.fill = GridBagConstraints.HORIZONTAL;
+		frame.add(textArea);
+		
 		
 		//Display the window
+		//frame.add();
 		frame.pack();
 		frame.setVisible(true);
 	}
@@ -31,24 +61,32 @@ public class StockTracker {
 		/*StockOption testStock = new StockOption("ASC");
 		testStock.update();
 		testStock.printData();*/
-		StockOption[] market = buildMarket(10);
+		StockOption[] market = buildMarket(3);
 		
 		//Print results
-		for(int i = 0; i < market.length; i++){
+		/*for(int i = 0; i < market.length; i++){
 			market[i].printData();
-		}
+		}*/
+		
+		final StockOption[] fMarket = market;
 		
 		//Create and show the GUI
-		/*javax.swing.SwingUtilities.invokeLater(new Runnable(){
+		javax.swing.SwingUtilities.invokeLater(new Runnable(){
 			public void run(){
-				createGUI();
+				createGUI(fMarket);
 			}
-		});*/
+		});
 	}
 	
 	//Creates a single string with printed results
 	public static String buildList(StockOption[] market){
-		String allProfiles = "";
+		String allProfiles = " ";
+		
+		for(int i = 0; i < market.length; i++){
+			allProfiles += market[i].giveData();
+		}
+		
+		System.out.printf(allProfiles);
 		
 		return allProfiles;
 	}
@@ -94,6 +132,12 @@ public class StockTracker {
 		
 		
 		return market;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
