@@ -46,21 +46,15 @@ public class StockTracker extends JPanel implements ActionListener {
 	}
 	
 	public static void main(String[] args) throws IOException{
-		//testStock
-		/*StockOption testStock = new StockOption("ASC");
-		testStock.update();
-		testStock.printData();*/
-		StockOption[] market = buildMarket(5);
+		StockOption[] market = buildRandomList(5);
 		
-		//Print results
+		//Debug: Print portfolio
 		/*for(int i = 0; i < market.length; i++){
 			market[i].printData();
 		}*/
-		
-		final StockOption[] fMarket = market;
-		
 		//System.out.print(buildList(market));
-		
+		//Final market to display in text
+		final StockOption[] fMarket = market;
 		//Create and show the GUI
 		javax.swing.SwingUtilities.invokeLater(new Runnable(){
 			public void run(){
@@ -71,7 +65,7 @@ public class StockTracker extends JPanel implements ActionListener {
 	
 	//Creates a single string with printed results
 	public static String buildList(StockOption[] market){
-		String allProfiles = " ";
+		String allProfiles = "";
 		
 		for(int i = 0; i < market.length; i++){
 			allProfiles += market[i].giveData();
@@ -83,11 +77,65 @@ public class StockTracker extends JPanel implements ActionListener {
 		return allProfiles;
 	}
 	
+	public static StockOption[] buildRandomList(int marketSize) throws IOException{
+		StockOption market[] = new StockOption[marketSize];
+		int start, stop;
+		
+		//Get latest market data
+		URL link = new URL("ftp://ftp.nasdaqtrader.com/SymbolDirectory/nasdaqlisted.txt");
+		URLConnection conn =link.openConnection();
+		InputStream in = conn.getInputStream();
+		
+		BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
+		String line = null, symb = "", page = "";
+		
+		//download and file each stock
+		buffer.readLine(); //Skip first line
+		
+		for(int index = 0; index < marketSize; index++){
+			//Get symbols from data
+			int j = (int)Math.random() * 100;
+			
+			while (j >= 0 && line != null){
+				line = buffer.readLine();
+				j--;
+			}
+			
+			if(line == null){
+				buffer = new BufferedReader(new InputStreamReader(in));
+				line = buffer.readLine();
+			}
+			
+			start = 0;
+			stop = line.indexOf('|', start);
+			
+			symb = line.substring(start, stop);
+			//download and build market array
+			StockOption stock = new StockOption(symb);
+			
+			//Debug download statement
+			System.out.printf("Now downloading: %s%n",symb);
+			try{
+				stock.update();
+			} catch(IOException e){
+				System.out.printf("%n=====%n"
+						+ "Data Unreadable!"
+						+ "%n=====%n%n");
+			}
+			//Only add stocks that work
+			if(!stock.isBadStock())	market[index] = stock;
+			else index--; //Skip the stock and read a new line
+		}
+		
+		System.out.printf(page);
+		return market;
+	}
+	
 	//Builds a test array of stock options using an alphabetical list of market data
 	//Throws out non-valid entries (It's pretty choosy)
 	//IN: an integer of the number of listings to download
 	//OUT: An array of the first [marketSize] of stocks
-	public static StockOption[] buildMarket(int marketSize) throws IOException{
+	public static StockOption[] buildTestList(int marketSize) throws IOException{
 		StockOption market[] = new StockOption[marketSize];
 		int start, stop;
 		
