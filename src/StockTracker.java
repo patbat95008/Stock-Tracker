@@ -79,11 +79,12 @@ public class StockTracker extends JPanel implements ActionListener {
 	
 	public static StockOption[] buildRandomList(int marketSize) throws IOException{
 		StockOption market[] = new StockOption[marketSize];
+		String portfolio[] = new String[marketSize];
 		int start, stop;
 		
 		//Get latest market data
 		URL link = new URL("ftp://ftp.nasdaqtrader.com/SymbolDirectory/nasdaqlisted.txt");
-		URLConnection conn =link.openConnection();
+		URLConnection conn = link.openConnection();
 		InputStream in = conn.getInputStream();
 		
 		BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
@@ -94,18 +95,32 @@ public class StockTracker extends JPanel implements ActionListener {
 		
 		for(int index = 0; index < marketSize; index++){
 			//Get symbols from data
-			int j = (int)Math.random() * 100;
+			int j = (int)(Math.random() * 1000);
+			//System.out.printf("%nrandom #= %d%n", j);
 			
-			while (j >= 0 && line != null){
-				line = buffer.readLine();
+			while (j >= 0){
+				/*if(line == null){
+					buffer = new BufferedReader(new InputStreamReader(in));
+					buffer.readLine();
+					line = buffer.readLine();
+					j--;
+				}else{
+					line = buffer.readLine();
+					j--;
+				}*/
+				String tmp = buffer.readLine();
+				if(tmp == null){
+					System.out.println("Reloading!\n");
+					conn = (new URL("ftp://ftp.nasdaqtrader.com/SymbolDirectory/nasdaqlisted.txt")).openConnection();
+					in = conn.getInputStream();
+					buffer = new BufferedReader(new InputStreamReader(in));
+					buffer.readLine();
+				}
+					
 				j--;
 			}
-			
-			if(line == null){
-				buffer = new BufferedReader(new InputStreamReader(in));
-				line = buffer.readLine();
-			}
-			
+			line = buffer.readLine();
+						
 			start = 0;
 			stop = line.indexOf('|', start);
 			
@@ -118,9 +133,9 @@ public class StockTracker extends JPanel implements ActionListener {
 			try{
 				stock.update();
 			} catch(IOException e){
-				System.out.printf("%n=====%n"
-						+ "Data Unreadable!"
-						+ "%n=====%n%n");
+				System.out.printf(//"%n=====%n"
+						 "%nData Unreadable!%n");
+						//+ "%n=====%n%n");
 			}
 			//Only add stocks that work
 			if(!stock.isBadStock())	market[index] = stock;

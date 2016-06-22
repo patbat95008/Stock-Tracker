@@ -159,7 +159,7 @@ public class StockOption {
 		data += "( " + symbol + " )" + ": " + name;
 		data += "\n==========\n";
 		data += "Price:\t$ " + Double.toString(price) + '\n';
-		data += "Change:\t" + Double.toString(change) + " ( " + Double.toString(percentChange) +"%% )\n";
+		data += "Change:\t" + Double.toString(change) + " ( " + Double.toString(percentChange) +" )\n";
 		data += "Market:\t" + market + "; Cap: " + marketCap + "\n"
 				+ "==========\n\n";
 		
